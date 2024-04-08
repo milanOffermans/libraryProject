@@ -1,0 +1,159 @@
+﻿using Library.Web.Domain;
+using Library.Web.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+
+namespace Library.Web.Controllers
+{
+    public partial class HomeController
+    {
+        private static string ConvertImageBytesToBase64ImageString(byte[] imageBytes)
+        {
+            const string prefix = "data:image/jpeg;base64,";
+            var imageData = Convert.ToBase64String(imageBytes);
+            return $"{prefix}{imageData}";
+        }
+
+        private static bool IsValid(Guid? id) => id != null && id.Value != Guid.Empty;
+
+        private static void TryUpdateMovieName(MovieDetailsViewModel updatedModel, Movie filmRecord)
+        {
+            if (updatedModel.Name != null)
+            {
+                filmRecord.UpdateName(updatedModel.Name);
+            }
+        }
+
+<<<<<<< HEAD
+        private static void UpdateRelationToMovieAsync(MovieDetailsViewModel updatedModel)
+        {
+            if (updatedModel.TagName == null)
+            {
+                return;
+            }
+
+            //var model = _context.Tag
+            //    .Include(x => x.MovieTags).ThenInclude(x => x.Movie)
+            //    .FirstOrDefault(x => x.Id == updatedModel.Id);
+
+            //var tagId = GetIdFromName(updatedModel.TagName);
+            //{
+            //    if (model != null)
+            //    {
+            //        _context.TryUpdateManyToMany(model.MovieTags, tagId
+            //                .Select(x => new MovieTag(x, updatedModel.Id) { TagId = x, MovieId = updatedModel.Id }),
+            //            x => x.TagId);
+            //    }
+            //}
+=======
+        private async Task<List<SelectListItem>> LoadTagsAsync(Movie entity)
+        {
+            var usedTags = entity.MovieTags.Select(mt => mt.Tag.Value);
+            var tags = await _context.Tag
+                .OrderBy(t => t.Value)
+                .Select(t => new SelectListItem()
+                {
+                    Text = t.Value,
+                    Value = t.Id.ToString(),
+                    Selected = usedTags.Contains(t.Value)
+                })
+                .ToListAsync().ConfigureAwait(false);
+
+            return tags;
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+        }
+
+        private async Task<IActionResult> CreateMovieAndRedirectAsync(MovieDetailsViewModel updatedModel)
+        {
+            var imageBytes = await TryGetImageBytesOrPlaceholderAsync(updatedModel).ConfigureAwait(false);
+            if (updatedModel.Name == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var newFilmRecord = new Movie(updatedModel.Name, imageBytes);
+            var entityEntry = await _context.Movie.AddAsync(newFilmRecord).ConfigureAwait(false);
+
+            updatedModel.ImageBase64 = await GetBase64ImageStringAsync(newFilmRecord.Image).ConfigureAwait(false);
+            _ = await _context.SaveChangesAsync().ConfigureAwait(false);
+
+            return RedirectToAction("Details", new { id = entityEntry.Entity.Id, });
+        }
+
+        private async Task<string> GetBase64ImageStringAsync(byte[]? imageBytes)
+        {
+            if (imageBytes is not null && imageBytes.Length != 0)
+            {
+                return ConvertImageBytesToBase64ImageString(imageBytes);
+            }
+
+            var placeholderImageBytes = await GetPlaceholderImageBytesAsync().ConfigureAwait(false);
+            return ConvertImageBytesToBase64ImageString(placeholderImageBytes);
+        }
+
+        private IEnumerable<Guid> GetIdFromName(string[] updatedModelTagName)
+        {
+            var ids = new Guid[] { };
+            for (var i = 0; i < updatedModelTagName.Length; i++)
+            {
+                ids = _context.Tag.Where(m => m.Value == updatedModelTagName[i]).Select(i => i.Id).ToArray();
+            }
+
+            return ids;
+        }
+
+        private async Task<byte[]> GetPlaceholderImageBytesAsync()
+        {
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, "img", "place_holder.png");
+            var placeholderImageBytes = await System.IO.File.ReadAllBytesAsync(path).ConfigureAwait(false);
+            return placeholderImageBytes;
+        }
+
+        private async Task<byte[]> TryGetImageBytesOrPlaceholderAsync(MovieDetailsViewModel model)
+        {
+            if (model.FormImage == null || model.FormImage.Length == 0)
+            {
+                return await GetPlaceholderImageBytesAsync().ConfigureAwait(false);
+            }
+
+            using var ms = new MemoryStream();
+            await model.FormImage.CopyToAsync(ms).ConfigureAwait(false);
+
+            return ms.ToArray();
+        }
+
+        private async Task TryUpdateMoveImageAsync(MovieDetailsViewModel updatedModel, Movie filmRecord)
+        {
+            if (updatedModel.FormImage != null && updatedModel.FormImage.Length != 0)
+            {
+                using var ms = new MemoryStream();
+                await updatedModel.FormImage.CopyToAsync(ms).ConfigureAwait(false);
+                var filmBytes = ms.ToArray();
+                filmRecord.UpdateImage(filmBytes);
+
+                updatedModel.ImageBase64 = ConvertImageBytesToBase64ImageString(filmBytes);
+            }
+            else
+            {
+                updatedModel.ImageBase64 = await GetBase64ImageStringAsync(filmRecord.Image).ConfigureAwait(false);
+            }
+        }
+<<<<<<< HEAD
+
+        private async Task UpdateMovie(Guid id, MovieDetailsViewModel updatedModel)
+        {
+            var filmRecord = _context.Movie.Single(m => m.Id == id);
+            TryUpdateMovieName(updatedModel, filmRecord);
+            await TryUpdateMoveImageAysnc(updatedModel, filmRecord).ConfigureAwait(false);
+            UpdateRelationToMovieAsync(updatedModel);
+
+            if (_context.Entry(filmRecord).State == EntityState.Modified)
+            {
+                _ = await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+=======
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+    }
+}

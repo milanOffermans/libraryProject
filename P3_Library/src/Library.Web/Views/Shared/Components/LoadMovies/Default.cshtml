@@ -1,0 +1,17 @@
+﻿@model MovieListItemViewModel
+<div class="movies" onclick="detailsClick('@Model.Id')">
+
+    <div class="card">
+        <img src=" @Model.ImageBase64" class="card-img-top" alt="image not found">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+        </div>
+    </div>
+</div>
+
+<script language="javascript">
+    function detailsClick(id) {
+
+        window.location.href = "https://localhost:7114/home/Details/" + id;
+    }
+</script>

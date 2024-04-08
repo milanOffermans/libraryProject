@@ -1,0 +1,140 @@
+﻿using System.Diagnostics;
+using Library.Web.Data;
+using Library.Web.Domain;
+using Library.Web.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace Library.Web.Controllers
+{
+    public partial class HomeController : Controller
+    {
+        private readonly LibContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public HomeController(LibContext context, IWebHostEnvironment webHostEnvironment)
+        {
+            _context = context;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public IActionResult Delete(Guid id)
+        {
+            var entity = _context.Movie.Single(m => m.Id == id);
+            _ = _context.Remove(entity);
+            _ = _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (IsValid(id))
+            {
+                var entity = _context.Movie
+                    .Include(m => m.MovieTags)
+                    .ThenInclude(mt => mt.Tag)
+                    .Single(m => m.Id == id);
+
+<<<<<<< HEAD
+                var usedTags = entity.MovieTags.Select(mt => mt.Tag.Value);
+                var index = 0;
+                var tags = await _context.Tag
+                    .Select(t => new TagViewModel()
+                    {
+                        Value = t.Value,
+                        IsUsed = usedTags.Contains(t.Value)
+                    })
+                    .ToListAsync().ConfigureAwait(false);
+                tags.ForEach(t => t.Id = index++);
+
+=======
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+                var movie = new MovieDetailsViewModel
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    ImageBase64 = await GetBase64ImageStringAsync(entity.Image).ConfigureAwait(false),
+                    Tags = await LoadTagsAsync(entity).ConfigureAwait(false)
+                };
+
+                return View(movie);
+            }
+            else
+            {
+                var movie = new MovieDetailsViewModel { ImageBase64 = await GetBase64ImageStringAsync(null).ConfigureAwait(false) };
+                return View(movie);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Details(Guid? id, MovieDetailsViewModel updatedModel)
+        {
+            if (updatedModel == null)
+            {
+                throw new ArgumentNullException(nameof(updatedModel));
+            }
+
+            if (!IsValid(id))
+            {
+                return await CreateMovieAndRedirectAsync(updatedModel).ConfigureAwait(false);
+            }
+
+            var entity = _context.Movie.Include(m => m.MovieTags).Single(m => m.Id == id);
+            TryUpdateMovieName(updatedModel, entity);
+            await TryUpdateMoveImageAsync(updatedModel, entity).ConfigureAwait(false);
+
+            var newMovieTags = updatedModel.Tags
+                .Where(vm => vm.Selected)
+                .Select(t => new MovieTag(entity.Id, Guid.Parse(t.Value))).ToList();
+            var currentMovieTags = entity.MovieTags.ToList();
+            _context.MovieTags.RemoveRange(currentMovieTags);
+            _context.MovieTags.AddRange(newMovieTags);
+
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+            return View(updatedModel);
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var movies = _context.Movie.ToList();
+            var movieList = new List<MovieListItemViewModel>();
+            foreach (var movie in movies)
+            {
+                var item = new MovieListItemViewModel
+                {
+                    Id = movie.Id,
+                    Name = movie.Name,
+                    ImageBase64 = await GetBase64ImageStringAsync(movie.Image).ConfigureAwait(false)
+                };
+                movieList.Add(item);
+            }
+
+            return View(new MovieListViewModel(movieList.OrderBy(m => m.Name)));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(MovieListItemViewModel newMovieList)
+        {
+            var movies = _context.Movie.ToList();
+            var movieList = new List<MovieListItemViewModel>();
+            var searchedItems = newMovieList != null && !string.IsNullOrWhiteSpace(newMovieList.SearchString) ? movies.Where(m => m.Name.Contains(newMovieList.SearchString)) : movies.Where(m => m.Name != newMovieList.SearchString);
+            foreach (var movie in searchedItems)
+            {
+                var item = new MovieListItemViewModel
+                {
+                    Id = movie.Id,
+                    Name = movie.Name,
+                    ImageBase64 = await GetBase64ImageStringAsync(movie.Image).ConfigureAwait(false)
+                };
+                movieList.Add(item);
+            }
+
+            return View(new MovieListViewModel(movieList.OrderBy(m => m.Name)));
+        }
+    }
+}

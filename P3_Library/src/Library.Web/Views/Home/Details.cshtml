@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model MovieDetailsViewModel
+@{
+    ViewData["Title"] = "details";
+}
+<h1>@Model.Name</h1>
+<form method="post" name="from-style" enctype="multipart/form-data">
+    <div id="form-image">
+        <img alt="loading.." src="@Model.ImageBase64" />
+    </div>
+    <div id="form-text">
+        <div class="mb-3">
+            <label for="film-img">Movie Image</label>
+            <input id="film-img" class="form-control" name="FormImage" type="file" /><br>
+        </div>
+        <div class="mb-3">
+            <label for="film-name">Movie Name </label>
+            <input id="film-name" class="form-control" name="Name" type="text" value="@Model.Name" required /><br>
+        </div>
+        <div class="mb-3">
+            <h4>Tags</h4>
+                <hr/>
+            <div class="check-box-tags">
+                @for (var i = 0; i < Model.Tags.Count; i++)
+                {
+                    <div class="btn btn-outline-primary">
+                        <div class="checked-tags">
+                            @Html.DisplayFor(m => m.Tags[i].Text)
+                            @Html.HiddenFor(m => m.Tags[i].Value)
+                            @Html.HiddenFor(m => m.Tags[i].Text)
+                            @Html.CheckBoxFor(m => m.Tags[i].Selected)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary">submit</button>
+        @if(Model.Id != Guid.Empty)
+        {
+            <button type="button" class= "btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Delete
+            </button>
+        }else
+        {
+            <button type="button" disabled data-bs-toggle="button" autocomplete="off" class="btn btn-danger">delete</button>
+        }
+    <script language="javascript">
+        function movieDeleteClick(id) {
+            window.location.href = "https://localhost:7114/home/Delete/" + id;
+        }
+    </script>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">are you sure ???</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                are you sure you wanna Delete this
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="movieDeleteClick('@Model.Id')" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

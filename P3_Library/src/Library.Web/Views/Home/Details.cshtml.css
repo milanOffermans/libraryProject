@@ -1,0 +1,47 @@
+﻿#form-text {
+    padding-bottom: 4rem;
+    padding-top: 6rem;
+    padding-left: 45rem;
+    display: flex;
+    flex-direction: column;
+    border-top: solid;
+    text-align: -webkit-center;
+}
+
+#form-image {
+    place-content: start;
+    max-width: 300px;
+    min-width: 300px;
+    overflow: inherit;
+    contain: size;
+    position: static;
+    padding-bottom: 3rem;
+}
+
+img {
+    width: 25rem;
+    max-height: 35rem;
+    padding-top: 5rem;
+}
+
+.checked-tags {
+    display: flex;
+    width: fit-content;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.check-box-tags {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.btn {
+    margin-bottom: 1rem;
+    margin-top: 5rem;
+}
+.btn.btn-outline-primary {
+    margin-top: 1rem; 
+}

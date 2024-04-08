@@ -1,0 +1,31 @@
+<<<<<<< HEAD
+﻿namespace Library.Web.Models
+=======
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace Library.Web.Models
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+{
+    public class MovieDetailsViewModel
+    {
+        public IFormFile? FormImage { get; set; }
+
+        public Guid Id { get; set; }
+
+        public string? ImageBase64 { get; set; }
+
+        public string? Name { get; set; }
+
+<<<<<<< HEAD
+        public string[]? TagName { get; set; }
+
+        public TagViewModel[]? Tags { get; set; }
+
+        public IEnumerable<string>? UnusedTags { get; set; }
+
+        public IEnumerable<string>? UsedTags { get; set; }
+=======
+        public List<SelectListItem> Tags { get; set; }
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+    }
+}

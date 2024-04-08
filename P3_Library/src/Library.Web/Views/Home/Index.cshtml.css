@@ -1,0 +1,91 @@
+﻿.movies {
+    display: flex;
+    background-color: whitesmoke;
+    cursor: pointer;
+    padding: 1rem;
+    margin: 1rem;
+    align-items: baseline;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+    min-width: fit-content;
+    min-height: fit-content;
+    max-width: 226px;
+}
+
+.card {
+    min-height: 350px;
+    max-height: 350px;
+    justify-content: center;
+    display: grid;
+    align-items: end;
+    text-align: center;
+}
+
+.card-body {
+    margin-top: -1rem;
+}
+
+.card-title {
+    width: 100%;
+    word-wrap: break-word;
+    max-width: 150px;
+}
+
+img {
+    width: 10rem;
+    height: fit-content;
+    margin: 1rem;
+}
+
+.details-container {
+    width: fit-content;
+    height: min-content;
+    margin: 4rem;
+    padding-left: 4rem;
+    justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.left-side-buttons {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: fit-content;
+    position: fixed;
+    padding-top: 10vw;
+}
+
+.searchItems {
+    justify-content: right;
+    gap: 1rem;
+    display: flex;
+    padding-top: 3rem;
+}
+
+#button-addon2 {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.check-box-tags {
+    display: flex;
+    justify-content: right;
+    padding-right: 2rem;
+    padding-left: 2rem;
+    padding-top: 1rem;
+    gap: 1rem;
+    max-width: 43rem;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    justify-content: flex-end;
+}
+
+.tags-field {
+    display: flex;
+    justify-content: flex-end;
+}

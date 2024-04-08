@@ -1,0 +1,40 @@
+﻿.movies {
+    display: flex;
+    background-color: whitesmoke;
+    cursor: pointer;
+    padding: 1rem;
+    margin: 1rem;
+    align-items: baseline;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+    min-width: fit-content;
+    min-height: fit-content;
+    max-width: 226px;
+}
+
+.card {
+    min-height: 350px;
+    max-height: 350px;
+    justify-content: center;
+    display: grid;
+    align-items: end;
+    text-align: center;
+}
+
+.card-body {
+    margin-top: -1rem;
+}
+
+.card-title {
+    width: 100%;
+    word-wrap: break-word;
+    max-width: 150px;
+}
+
+img {
+    width: 10rem;
+    height: fit-content;
+    margin: 1rem;
+}

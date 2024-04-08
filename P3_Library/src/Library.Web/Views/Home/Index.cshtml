@@ -1,0 +1,45 @@
+﻿@using Library.Web.MovieComponents
+@model MovieListViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    <h1 >Welcome</h1>
+    <p class="card-text">to my film Library</p>
+</div>
+<form method="post">
+    <div class="input-group">
+        <div class="searchItems">
+            <input type="text" name="SearchString" class="form-control" placeholder="search movie"/>
+            <input type="submit" value="Search" class="btn btn-primary" id="button-addon2"/>
+        </div>
+    </div>
+    <div class="tags-field">
+        <div class="check-box-tags">
+            @foreach (var tag in Model.Tags)
+            {
+                @if (tag.Value == null)
+                {
+                    continue;
+                }
+                <vc:load-tags-in-check-box item="@tag"></vc:load-tags-in-check-box>
+            }
+        </div>
+    </div>
+</form>
+<div class="left-side-buttons">
+    <button class="btn btn-primary" onclick="addMovie()">add movie</button>
+</div>
+
+<div class="details-container">
+    @foreach (var item in Model.Items)
+    {
+       <vc:load-movies item="@item"></vc:load-movies>
+    }
+</div>
+<script language="javascript">
+
+    function addMovie() {
+        window.location.href = "https://localhost:7114/home/Details/" ;
+    }
+</script>

@@ -1,0 +1,53 @@
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Library.Web.Domain
+{
+    public static class MovieTagExtesion
+    {
+        public static void TryUpdateManyToMany<T, TKey>(this DbContext db, IEnumerable<T> currentItems, IEnumerable<T> newItems, IEqualityComparer<T>? getKey) where T : class
+        {
+            if (db == null)
+            {
+                return;
+            }
+
+            db.Set<T>().RemoveRange(currentItems.Except(newItems, getKey));
+            db.Set<T>().AddRange(newItems.Except(currentItems, getKey));
+        }
+
+        private static IEnumerable<T> Except<T, TKey>(this IEnumerable<T> items, IEnumerable<T> other, Func<T, TKey> getKeyFunc)
+        {
+            return items
+                .GroupJoin(other, getKeyFunc, getKeyFunc, (item, tempItems) => new { item, tempItems })
+                .SelectMany(t => t.tempItems.DefaultIfEmpty(), (t, temp) => new { t, temp })
+                .Where(t => t is { temp: null } || t.temp.Equals(default(T)))
+                .Select(t => t.t.item);
+        }
+    }
+
+    public class MovieTag
+    {
+<<<<<<< HEAD
+        public MovieTag(Guid tagId, Guid movieId)
+=======
+        public MovieTag(Guid movieId, Guid tagId)
+>>>>>>> d336b81cca54d8fb4bca561dce6f88ea6ab55cd6
+        {
+            MovieId = movieId;
+            TagId = tagId;
+        }
+
+        private MovieTag()
+        {
+            
+        }
+
+        public Movie Movie { get; private set; }
+
+        public Guid MovieId { get; private set; }
+
+        public Tag Tag { get; private set; }
+
+        public Guid TagId { get; set; }
+    }
+}

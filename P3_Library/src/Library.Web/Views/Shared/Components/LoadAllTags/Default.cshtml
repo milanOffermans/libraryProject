@@ -1,0 +1,31 @@
+﻿@model TagListItemViewModel
+<div class="card">
+    <div class="card-body">
+        @Model.Value
+        <div class="card-img">
+            <form method="post">
+                <a href="#"><img alt="delete" src="img/prullenbak.png" onclick="deleteTag('@Model.Id')" class="Image-Delete"/></a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script language="javascript">
+    function deleteTag(id) {
+        var url = "https://localhost:7114/Tag/Delete?id=" + id;
+        // ReSharper disable once PossiblyUnassignedProperty
+        // ReSharper disable once UseOfImplicitGlobalInFunctionScope
+        $.ajax(url,
+            {
+                type: 'POST',
+                timeout: 1000,
+                success: function (data) {
+                    alert(`Tag ${data} was deleted!`);
+                    window.location.href = "https://localhost:7114/Tag";
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    alert(errorMessage);
+                }
+            });
+    }
+</script>
